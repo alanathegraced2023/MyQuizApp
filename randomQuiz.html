@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        ul {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        ul li {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none !important;
+            color: black !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Simple Quiz App</h1>
+        <div class="category">
+            <h3>category</h3>
+            <ul class="list-style-type-none">
+                <li style="text-decoration: underline;"><a href="#" target="" rel="noopener noreferrer">Random</a></li>
+                <li><a href="./entertainmentQuiz.html">Entertainment</a></li>
+                <li><a href="./sportQuiz.html">Sport</a></li>
+            </ul>
+        </div>
+        <hr>
+        <div id="quiz-container" class="mt-4">
+            <div id="question-container" class="mb-4">
+                <h3 id="question">Question text</h3>
+                <div id="answer-buttons" class="btn-group-vertical"></div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button id="prev-button" class="btn btn-secondary hidden">Previous</button>
+                <button id="next-button" class="btn btn-primary hidden">Next</button>
+                <!-- <button id="show-answer-button" class="btn btn-info">Show Answer</button> -->
+            </div>
+        </div>
+        <div id="result-container d-flex justify-content-center" class="hidden">
+            <h3>Your Score: <span id="score"></span></h3>
+            <button id="restart-button" class="btn btn-danger text-center">Restart</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        const questions = [
+            {
+                question: 'What is the capital of France?',
+                answers: [
+                    { text: 'London', correct: false },
+                    { text: 'Berlin', correct: false },
+                    { text: 'Madrid', correct: false },
+                    { text: 'Paris', correct: true },
+                ]
+            },
+            {
+                question: 'What is the longest river in the world?',
+                answers: [
+                    { text: 'Nile', correct: true },
+                    { text: 'Amazon', correct: false },
+                    { text: 'Yangtze', correct: false },
+                    { text: 'Mississippi', correct: false }
+                ]
+            },
+            {
+                question: 'Who painted the Mona Lisa?',
+                answers: [
+                    { text: 'Michelangelo', correct: false },
+                    { text: 'Raphael', correct: false },
+                    { text: 'Leonardo da Vinci', correct: true },
+                    { text: 'Vincent van Gogh', correct: false }
+                ]
+            },
+            {
+                question: 'What is the currency of Japan?',
+                answers: [
+                    { text: 'Yen', correct: true },
+                    { text: 'Won', correct: false },
+                    { text: 'Dollar', correct: false },
+                    { text: 'Euro', correct: false }
+                ]
+            },
+            {
+                question: 'Who discovered penicillin?',
+                answers: [
+                    { text: 'Alexander Fleming', correct: true },
+                    { text: 'Marie Curie', correct: false },
+                    { text: 'Louis Pasteur', correct: false },
+                    { text: 'Joseph Lister', correct: false }
+                ]
+            },
+            {
+                question: 'What is the square root of 64?',
+                answers: [
+                    { text: '6', correct: false },
+                    { text: '8', correct: true },
+                    { text: '7', correct: false },
+                    { text: '9', correct: false }
+                ]
+            },
+            {
+                question: 'What is the capital of Australia?',
+                answers: [
+                    { text: 'Sydney', correct: false },
+                    { text: 'Melbourne', correct: false },
+                    { text: 'Canberra', correct: true },
+                    { text: 'Brisbane', correct: false }
+                ]
+            },
+            {
+                question: 'Who was the first person to walk on the moon?',
+                answers: [
+                    { text: 'Buzz Aldrin', correct: false },
+                    { text: 'Yuri Gagarin', correct: false },
+                    { text: 'Neil Armstrong', correct: true },
+                    { text: 'John Glenn', correct: false }
+                ]
+            },
+            {
+                question: 'What is the capital city of Canada?',
+                answers: [
+                    { text: 'Toronto', correct: false },
+                    { text: 'Vancouver', correct: false },
+                    { text: 'Ottawa', correct: true },
+                    { text: 'Montreal', correct: false }
+                ]
+            },
+            {
+                question: 'What is the hardest naturally occurring mineral?',
+                answers: [
+                    { text: 'Ruby', correct: false },
+                    { text: 'Emerald', correct: false },
+                    { text: 'Sapphire', correct: false },
+                    { text: 'Diamond', correct: true },
+                ]
+            },
+            {
+                question: 'Which planet is known as the Red Planet?',
+                answers: [
+                    { text: 'Jupiter', correct: false },
+                    { text: 'Venus', correct: false },
+                    { text: 'Saturn', correct: false },
+                    { text: 'Mars', correct: true },
+                ]
+            },
+            {
+                question: 'What is the main ingredient in guacamole?',
+                answers: [
+                    { text: 'Avocado', correct: true },
+                    { text: 'Tomato', correct: false },
+                    { text: 'Lettuce', correct: false },
+                    { text: 'Cucumber', correct: false }
+                ]
+            },
+            {
+                question: 'Which country is the origin of the samba dance?',
+                answers: [
+                    { text: 'Brazil', correct: true },
+                    { text: 'Argentina', correct: false },
+                    { text: 'Spain', correct: false },
+                    { text: 'Mexico', correct: false }
+                ]
+            },
+            {
+                question: 'What is the national sport of Japan?',
+                answers: [
+                    { text: 'Judo', correct: false },
+                    { text: 'Sumo wrestling', correct: true },
+                    { text: 'Karate', correct: false },
+                    { text: 'Baseball', correct: false }
+                ]
+            },
+            {
+                question: 'Which Italian city is famous for its canals?',
+                answers: [
+                    { text: 'Rome', correct: false },
+                    { text: 'Venice', correct: true },
+                    { text: 'Milan', correct: false },
+                    { text: 'Florence', correct: false }
+                ]
+            },
+            {
+                question: 'Which language is the most spoken in the world?',
+                answers: [
+                    { text: 'Mandarin Chinese', correct: true },
+                    { text: 'Spanish', correct: false },
+                    { text: 'English', correct: false },
+                    { text: 'Hindi', correct: false }
+                ]
+            },
+            {
+                question: 'How many continents are there on Earth?',
+                answers: [
+                    { text: '5', correct: false },
+                    { text: '6', correct: false },
+                    { text: '7', correct: true },
+                    { text: '8', correct: false }
+                ]
+            },
+            {
+                question: 'What is the smallest prime number?',
+                answers: [
+                    { text: '1', correct: false },
+                    { text: '2', correct: true },
+                    { text: '3', correct: false },
+                    { text: '5', correct: false }
+                ]
+            },
+            {
+                question: 'What is the national flower of the United States?',
+                answers: [
+                    { text: 'Rose', correct: true },
+                    { text: 'Tulip', correct: false },
+                    { text: 'Sunflower', correct: false },
+                    { text: 'Daisy', correct: false }
+                ]
+            },
+            {
+                question: 'What type of animal is a Komodo dragon?',
+                answers: [
+                    { text: 'Lizard', correct: true },
+                    { text: 'Snake', correct: false },
+                    { text: 'Crocodile', correct: false },
+                    { text: 'Turtle', correct: false }
+                ]
+            },
+            {
+                question: 'Who is known as the "Father of Computers"?',
+                answers: [
+                    { text: 'Alan Turing', correct: false },
+                    { text: 'John von Neumann', correct: false },
+                    { text: 'Charles Babbage', correct: true },
+                    { text: 'Blaise Pascal', correct: false }
+                ]
+            },
+            {
+                question: 'Which language is the most widely spoken in the world?',
+                answers: [
+                    { text: 'Spanish', correct: false },
+                    { text: 'English', correct: false },
+                    { text: 'Mandarin Chinese', correct: true },
+                    { text: 'Hindi', correct: false }
+                ]
+            },
+            {
+                question: 'What is the chemical symbol for gold?',
+                answers: [
+                    { text: 'Au', correct: true },
+                    { text: 'Ag', correct: false },
+                    { text: 'Fe', correct: false },
+                    { text: 'Pb', correct: false }
+                ]
+            },
+            {
+                question: 'What is the name of the largest ocean on Earth?',
+                answers: [
+                    { text: 'Atlantic Ocean', correct: false },
+                    { text: 'Pacific Ocean', correct: true },
+                    { text: 'Indian Ocean', correct: false },
+                    { text: 'Arctic Ocean', correct: false }
+                ]
+            },
+            {
+                question: 'Which country won the FIFA World Cup in 2018?',
+                answers: [
+                    { text: 'Croatia', correct: false },
+                    { text: 'France', correct: true },
+                    { text: 'Brazil', correct: false },
+                    { text: 'Germany', correct: false }
+                ]
+            },
+            {
+                question: 'What is the powerhouse of the cell?',
+                answers: [
+                    { text: 'Mitochondria', correct: true },
+                    { text: 'Nucleus', correct: false },
+                    { text: 'Ribosome', correct: false },
+                    { text: 'Endoplasmic Reticulum', correct: false }
+                ]
+            },
+            {
+                question: 'How many continents are there on Earth?',
+                answers: [
+                    { text: 'Seven', correct: true },
+                    { text: 'Six', correct: false },
+                    { text: 'Five', correct: false },
+                    { text: 'Eight', correct: false }
+                ]
+            },
+            {
+                question: 'Who wrote "To Kill a Mockingbird"?',
+                answers: [
+                    { text: 'F. Scott Fitzgerald', correct: false },
+                    { text: 'Harper Lee', correct: true },
+                    { text: 'J.D. Salinger', correct: false },
+                    { text: 'Mark Twain', correct: false }
+                ]
+            },
+            {
+                question: 'What is the tallest mountain in the world?',
+                answers: [
+                    { text: 'Mount Everest', correct: true },
+                    { text: 'K2', correct: false },
+                    { text: 'Kangchenjunga', correct: false },
+                    { text: 'Lhotse', correct: false }
+                ]
+            },
+            {
+                question: 'Who is the author of the Harry Potter series?',
+                answers: [
+                    { text: 'J.R.R. Tolkien', correct: false },
+                    { text: 'George R.R. Martin', correct: false },
+                    { text: 'Suzanne Collins', correct: false },
+                    { text: 'J.K. Rowling', correct: true },
+                ]
+            },
+            {
+                question: 'What gas do plants absorb from the atmosphere during photosynthesis?',
+                answers: [
+                    { text: 'Oxygen', correct: false },
+                    { text: 'Nitrogen', correct: false },
+                    { text: 'Carbon dioxide', correct: true },
+                    { text: 'Helium', correct: false }
+                ]
+            }
+
+
+            // Add more questions here...
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const userAnswers = [];
+
+        $(document).ready(function() {
+            showQuestion();
+
+            $('#next-button').click(function() {
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            });
+
+            $('#prev-button').click(function() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    showQuestion();
+                }
+            });
+
+            $('#restart-button').click(function() {
+                window.location.reload();
+            });
+
+            $('#show-answer-button').click(function() {
+                showCorrectAnswer();
+            });
+        });
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = questions[currentQuestionIndex];
+            $('#question').text(currentQuestion.question);
+            currentQuestion.answers.forEach((answer, index) => {
+                const button = $('<button class="btn btn-outline-primary mb-2"></button>');
+                button.text(answer.text);
+                button.click(() => selectAnswer(index));
+                $('#answer-buttons').append(button);
+                if (userAnswers[currentQuestionIndex] !== undefined) {
+                    button.addClass(userAnswers[currentQuestionIndex] === index ? (answer.correct ? 'btn-success' : 'btn-danger') : 'btn-outline-primary');
+                    button.prop('disabled', true);
+                }
+            });
+            $('#next-button').toggleClass('hidden', currentQuestionIndex === questions.length - 1);
+            $('#prev-button').toggleClass('hidden', currentQuestionIndex === 0);
+            $('#next-button').text(currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next');
+        }
+
+        function resetState() {
+            $('#answer-buttons').empty();
+        }
+
+        function selectAnswer(index) {
+            const currentQuestion = questions[currentQuestionIndex];
+            if (userAnswers[currentQuestionIndex] === undefined) {
+                userAnswers[currentQuestionIndex] = index;
+                if (currentQuestion.answers[index].correct) {
+                    score++;
+                }
+                // Highlight the correct answer
+                currentQuestion.answers.forEach((answer, i) => {
+                    if (answer.correct) {
+                        $('#answer-buttons').children().eq(i).addClass('btn-success bg-success text-white');
+                    } else {
+                        $('#answer-buttons').children().eq(i).addClass('btn-danger');
+                    }
+                });
+            }
+            $('#answer-buttons').children().prop('disabled', true);
+        }
+
+        // function showCorrectAnswer() {
+        //     const currentQuestion = questions[currentQuestionIndex];
+        //     currentQuestion.answers.forEach((answer, i) => {
+        //         if (answer.correct) {
+        //             $('#answer-buttons').children().eq(i).addClass('btn-success');
+        //         }
+        //     });
+        // }
+
+        function showResults() {
+            $('#quiz-container').addClass('hidden');
+            $('#result-container').removeClass('hidden');
+            $('#score').text(`${score} / ${questions.length}`);
+        }
+    </script>
+</body>
+</html>
